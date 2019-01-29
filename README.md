@@ -2,7 +2,7 @@
 
 ----------------------------------------------------------------------------------------
 
-For detail usage illustration, please ref the **README_FILE.pdf** .
+For detail usage illustration, please ref the **Nordic Toolkits illustration.pdf**.
 
 ----------------------------------------------------------------------------------------
 
