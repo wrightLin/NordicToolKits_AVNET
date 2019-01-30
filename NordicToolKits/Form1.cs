@@ -871,7 +871,7 @@ namespace nrfGoReplacer
             string str_cmd = $"nrfjprog.exe {str_multi_IC_version} -s {str_multi_Serial_NOs} --rbp ALL";
             string str_cmd_exe_path = $"cmd.exe";
 
-            form.OpenCmdAndExecute(str_cmd_exe_path, str_cmd, CMD_TYPE.RBP, Is_multi_FormControl,Is_Last_Control_Item);
+            form.OpenCmdAndExecute(str_cmd_exe_path, str_cmd, CMD_TYPE.RBP_MULTI, Is_multi_FormControl,Is_Last_Control_Item);
 
         }
 
