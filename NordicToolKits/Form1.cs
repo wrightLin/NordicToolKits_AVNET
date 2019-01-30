@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
+using System.Linq;
+using System.Management;
 
 namespace nrfGoReplacer
 {
@@ -42,7 +44,7 @@ namespace nrfGoReplacer
 
     public partial class Form1 : Form
     {
-        public string str_vernum = "3.0.0";
+        public string str_vernum = "3.1.0";
         public string str_cmd_exe_path = $"cmd.exe";
         public string str_IC_number = string.Empty;
         public string[] str_arr_serialsNOs = { };
@@ -74,7 +76,7 @@ namespace nrfGoReplacer
 
             //read all connected jlink serial numbers  
             ReadAllSerialNO();
-            ComboxsItemSettings();
+            ComboxsItemSettingsFormLoad();
 
             //Make different thread could control form
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -82,6 +84,9 @@ namespace nrfGoReplacer
             //bring default path to textboxes (Readcode/Mergehex output path)
             textBox15.Text = str_default_output_folder_path;
             textBox18.Text = str_default_output_folder_path;
+
+            //For Detecting USB Plug/Unplug Event (Dynamic change MultiTarget List)
+            USB_Event_Watcher();
         }
 
 
@@ -239,7 +244,8 @@ namespace nrfGoReplacer
             //2.In Multithread, we display the result only at the finish of last action.
             for (int i = 1; i <= int_combox_num; i++)
             {
-                if (comboxDic[i].SelectedIndex != int_combox_default_index)
+                if (comboxDic[i].SelectedItem !=null && 
+                    (Int32)comboxDic[i].SelectedIndex != 0)
                 {
                     IsLastControlItem = (LastActionItemIndex == i) ? true : false;
                     IsFormControl = (LastActionItemIndex == i) ? true : false;
@@ -461,7 +467,7 @@ namespace nrfGoReplacer
 
         #region Ineer Usage
 
-        public void ComboxsItemSettings()
+        public void ComboxsItemSettingsFormLoad()
         {
             //New Combox dictionary for multiTarget Selecting
             comboxDic = new Dictionary<int, ComboBox>();
@@ -476,6 +482,15 @@ namespace nrfGoReplacer
             comboxDic.Add(9, comboBox9);
             comboxDic.Add(10, comboBox10);
 
+            //clear combox items 
+            for (int i = 1; i <= int_combox_num; i++)
+            {
+                comboxDic[i].Items.Clear();
+                comboxDic[i].Items.Add(string.Empty);
+            }
+                
+
+
             //Add Combox content
             foreach (string str_serialNo in str_arr_serialsNOs)
             {
@@ -487,6 +502,7 @@ namespace nrfGoReplacer
                     }
                 }
             }
+
 
             //set default combox selected item
             for (int i = 1; i <= 10; i++)
@@ -625,11 +641,13 @@ namespace nrfGoReplacer
                     break;
 
                 case CMD_TYPE.BT_ADDRESS_READ:
+
+                    //Address Fixer
+                    string str_first_address_char = Device_Address_Fixer(output.Substring(34, 1));
                     textBox5.Text =
-                        $"{output.Substring(34, 2)}:{output.Substring(36, 2)}:" +
+                        $"{str_first_address_char}{output.Substring(35, 1)}:{output.Substring(36, 2)}:" +
                         $"{output.Substring(21, 2)}:{output.Substring(23, 2)}:" +
-                        $"{output.Substring(25, 2)}:{output.Substring(27, 2)}:" +
-                        $"{output.Substring(30, 2)}:{output.Substring(32, 2)}";
+                        $"{output.Substring(25, 2)}:{output.Substring(27, 2)}";
                     MessageBox.Show($"BT address finded!");
                     break;
 
@@ -701,10 +719,46 @@ namespace nrfGoReplacer
 
         }
 
+        private void Combox_list_refresh(object sender, EventArrivedEventArgs e)
+        {
+            //read connected debugger serial numbers
+            ReadAllSerialNO();
+            ComboxsItemSettingsFormLoad();
+        }
 
+        private string Device_Address_Fixer(string str_hex_to_fix)
+        {
+            string result = string.Empty;
+            string str_hex_to_binary = string.Empty;
 
+            //Convert str_hex_to_fix to Binaray string 
+            str_hex_to_binary = 
+                String.Join(String.Empty,
+                                str_hex_to_fix.Select(
+                                c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')
+                                )
+                            );
 
+            //fix the first two bit to "1"
+            str_hex_to_binary = $"11{str_hex_to_binary.Substring(2,2)}";
 
+            //Convert it to hex string again
+            result = Convert.ToInt32(str_hex_to_binary, 2).ToString("X");
+            
+
+            return result;
+        }
+
+        private void USB_Event_Watcher()
+        {
+            ManagementEventWatcher watcher = new ManagementEventWatcher();
+            WqlEventQuery query = new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2 Or EventType = 3 ");
+            watcher.EventArrived += new EventArrivedEventHandler(Combox_list_refresh);
+            watcher.Query = query;
+            watcher.Start();
+            //watcher.WaitForNextEvent();
+
+        }
 
 
         #endregion
@@ -723,10 +777,7 @@ namespace nrfGoReplacer
 
 
 
-        //private void Form1_Load(object sender, EventArgs e)
-        //{
-
-        //}
+   
 
 
 
@@ -760,81 +811,7 @@ namespace nrfGoReplacer
 
 
 
-
-
-
-        /*   Asyncronize Way to handle cmd    */
-
-        ///// <summary>
-        ///// Open Command line exe and execute input commands
-        ///// </summary>
-        ///// <param name="str_cmd_exe_path"></param>
-        ///// <param name="str_cmd"></param>
-        //private void OpenCmdAndExecute(string str_cmd_exe_path, string str_cmd)
-        //{
-        //    //open command line exe
-        //    Process p = new Process();
-        //    p.StartInfo.FileName = str_cmd_exe_path;
-
-        //    //set cmd format
-        //    p.StartInfo.UseShellExecute = false;
-        //    p.StartInfo.RedirectStandardInput = true;
-        //    p.StartInfo.RedirectStandardOutput = true;
-        //    p.StartInfo.RedirectStandardError = true;
-        //    p.StartInfo.CreateNoWindow = true;
-
-        //    //* Set your output and error (asynchronous) handlers
-        //    p.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
-        //    p.ErrorDataReceived += new DataReceivedEventHandler(OutputHandler);
-
-
-        //    p.Start();
-
-        //    //input command line
-        //    p.StandardInput.WriteLine(str_cmd);
-
-        //    //write result
-        //    p.BeginOutputReadLine();
-        //    p.BeginErrorReadLine();
-
-        //    //close process
-        //    p.Close();
-
-        //}
-
-
-        ///// <summary>
-        ///// Cmd process output handler 
-        ///// </summary>
-        ///// <param name="sendingProcess"></param>
-        ///// <param name="outLine"></param>
-        //private void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        //{
-        //    //Error
-        //    if (outLine.Data.ToUpper().Contains("ERROR"))
-        //    {
-        //        MessageBox.Show($"Proccess failed! \r\nError : {outLine.Data}\r\n");
-        //    }
-
-        //    //Program Success
-        //    if (outLine.Data.ToUpper().Contains("VERIFIED OK"))
-        //    {
-        //        MessageBox.Show($"Programing proccess is done\r\n");
-        //    }
-
-        //    //Reset
-        //    if (outLine.Data.ToUpper().Contains("RUN."))
-        //    {
-        //        MessageBox.Show($"System is reset\r\n");
-        //    }
-
-        //    //Erase All
-        //    if (outLine.Data.ToUpper().Contains("ERASING"))
-        //    {
-        //        MessageBox.Show($"Erase System\r\n");
-        //    }
-
-        //}
+        
 
 
 
