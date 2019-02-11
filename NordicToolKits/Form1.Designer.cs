@@ -498,9 +498,9 @@
             this.label9.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label9.Location = new System.Drawing.Point(62, 55);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(73, 18);
+            this.label9.Size = new System.Drawing.Size(65, 18);
             this.label9.TabIndex = 0;
-            this.label9.Text = "FilePath1";
+            this.label9.Text = "FilePath";
             // 
             // groupBox3
             // 
@@ -821,7 +821,7 @@
             // button26
             // 
             this.button26.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button26.Location = new System.Drawing.Point(499, 252);
+            this.button26.Location = new System.Drawing.Point(497, 252);
             this.button26.Name = "button26";
             this.button26.Size = new System.Drawing.Size(76, 31);
             this.button26.TabIndex = 54;
@@ -854,7 +854,7 @@
             // button23
             // 
             this.button23.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button23.Location = new System.Drawing.Point(497, 42);
+            this.button23.Location = new System.Drawing.Point(497, 44);
             this.button23.Name = "button23";
             this.button23.Size = new System.Drawing.Size(76, 31);
             this.button23.TabIndex = 44;
