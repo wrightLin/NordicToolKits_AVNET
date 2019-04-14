@@ -403,10 +403,12 @@ namespace nrfGoReplacer
 
         private void Merge_Click(object sender, EventArgs e)
         {
-            string str_mergeFile1 = textBox12.Text;
-            string str_mergeFile2 = textBox13.Text;
-            string str_mergeFile3 = textBox14.Text;
-            string str_mergeFile4 = textBox7.Text;
+            //wright : 0414 fix path contain empty bug
+            string str_path_empty_fix = "\"";
+            string str_mergeFile1 = str_path_empty_fix + textBox12.Text + str_path_empty_fix;
+            string str_mergeFile2 = str_path_empty_fix + textBox13.Text + str_path_empty_fix;
+            string str_mergeFile3 = str_path_empty_fix + textBox14.Text + str_path_empty_fix;
+            string str_mergeFile4 = str_path_empty_fix + textBox7.Text + str_path_empty_fix;
 
             string str_outputFile_fullName = $"{textBox15.Text}\\{textBox16.Text}";
             
