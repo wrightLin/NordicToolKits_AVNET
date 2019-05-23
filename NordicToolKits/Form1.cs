@@ -131,7 +131,11 @@ namespace nrfGoReplacer
         private void SoftdeviceProgram_Click(object sender, EventArgs e)
         {
             ReadIcVersion();
-            string sd_filePath = textBox1.Text;
+            //wright : 0523 fix path contain empty bug
+            string str_path_empty_fix = "\"";
+            string sd_filePath = str_path_empty_fix +textBox1.Text+ str_path_empty_fix;
+
+
             string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --verify";
             string str_cmd_exe_path = $"cmd.exe";
 
@@ -150,7 +154,10 @@ namespace nrfGoReplacer
         private void ApplicationProgram_Click(object sender, EventArgs e)
         {
             ReadIcVersion();
-            string sd_filePath = textBox2.Text;
+            //wright : 0523 fix path contain empty bug
+            string str_path_empty_fix = "\"";
+            string sd_filePath = str_path_empty_fix + textBox2.Text + str_path_empty_fix ;
+
             string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --verify";
             string str_cmd_exe_path = $"cmd.exe";
 
@@ -224,9 +231,14 @@ namespace nrfGoReplacer
 
         private void MultiTarget_Actions_Process(MULTI_TARGET_ACTION_TYPE type)
         {
-            //check IC version
-            string str_filepath = textBox6.Text;
+            
+
+            //wright : 0523 fix path contain empty bug
+            string str_path_empty_fix = "\"";
+            string str_filepath = str_path_empty_fix + textBox6.Text + str_path_empty_fix;
             string str_serial_no = str_arr_serialsNOs[0];
+
+            //check IC version
             ReadIcVersion(str_serial_no);
             MultiThreadsAction mtc;
             Thread thread;
