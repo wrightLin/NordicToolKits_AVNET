@@ -136,7 +136,7 @@ namespace nrfGoReplacer
             string sd_filePath = str_path_empty_fix +textBox1.Text+ str_path_empty_fix;
 
 
-            string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --verify";
+            string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --sectorerase --verify";
             string str_cmd_exe_path = $"cmd.exe";
 
             OpenCmdAndExecute(str_cmd_exe_path, str_cmd, CMD_TYPE.PROGRAM_SD);
@@ -158,7 +158,7 @@ namespace nrfGoReplacer
             string str_path_empty_fix = "\"";
             string sd_filePath = str_path_empty_fix + textBox2.Text + str_path_empty_fix ;
 
-            string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --verify";
+            string str_cmd = $"nrfjprog.exe {str_IC_number} --program {sd_filePath} --sectorerase --verify";
             string str_cmd_exe_path = $"cmd.exe";
 
             OpenCmdAndExecute(str_cmd_exe_path, str_cmd, CMD_TYPE.PROGRAM_APP);
@@ -872,7 +872,7 @@ namespace nrfGoReplacer
 
         public void Program_Hex()
         {
-            string str_cmd = $"nrfjprog.exe {str_multi_IC_version} -s {str_multi_Serial_NOs} --program {str_multi_Filepath} --verify";
+            string str_cmd = $"nrfjprog.exe {str_multi_IC_version} -s {str_multi_Serial_NOs} --program {str_multi_Filepath} --sectorerase --verify";
             string str_cmd_exe_path = $"cmd.exe";
 
             form.OpenCmdAndExecute(str_cmd_exe_path, str_cmd, CMD_TYPE.PROGRAM_MULTI_APP, Is_multi_FormControl,Is_Last_Control_Item);
