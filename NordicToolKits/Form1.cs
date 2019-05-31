@@ -709,6 +709,8 @@ namespace nrfGoReplacer
                         str_IC_number = "-f nrf52";
                     else if (output.Contains("53"))
                         str_IC_number = "-f nrf53";
+                    else
+                        str_IC_number = "-f nrf52"; //default value
                     break;
 
                 // Parse all Debugger serial no to MultiTarget Dropdown list
