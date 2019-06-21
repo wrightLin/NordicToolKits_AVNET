@@ -71,7 +71,7 @@ namespace nrfGoReplacer
 
             //fix form size 
             this.MinimumSize = new Size(550, int.MaxValue);
-            this.MaximumSize = new Size(550, int.MaxValue);
+            //this.MaximumSize = new Size(550, int.MaxValue);
             this.MaximizeBox = false;
 
             //read all connected jlink serial numbers  
