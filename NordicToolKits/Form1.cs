@@ -1,4 +1,5 @@
-﻿using System;
+﻿//wright test fot git 20220825
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
